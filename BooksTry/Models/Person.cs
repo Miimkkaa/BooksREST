@@ -7,5 +7,27 @@ namespace BooksTry.Models
 {
     public class Person
     {
+        public int PersonId { get; set; }
+        public string FullName { get; set; }
+        public string Username { get; set; }
+        public string Pass { get; set; }
+        public string Email { get; set; }
+        public int Type { get; set; } //in db is int, later on connect to enum
+        //public byte[] Photo { get; set; }
+
+        public Person()
+        {
+                
+        }
+
+        public Person(int personId, string fullName, string username, string pass, string email, int type)
+        {
+            PersonId = personId;
+            FullName = fullName;
+            Username = username;
+            Pass = pass;
+            Email = email;
+            Type = type;
+        }
     }
 }
