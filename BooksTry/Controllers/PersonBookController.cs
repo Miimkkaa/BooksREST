@@ -11,15 +11,15 @@ namespace BooksTry.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonController : ControllerBase
+    public class PersonBookController : ControllerBase
     {
         private string connectionString = ConnectionString.connectionString;
 
-        // GET: api/Person
+        // GET: api/PersonBook
         [HttpGet]
-        public IEnumerable<Person> Get()
+        public IEnumerable<PersonBook> Get()
         {
-            string selectString = "select * from PERSON;";
+            string selectString = "select * from PERSONBOOK;";
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
@@ -27,10 +27,10 @@ namespace BooksTry.Controllers
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        List<Person> result = new List<Person>();
+                        List<PersonBook> result = new List<PersonBook>();
                         while (reader.Read())
                         {
-                            Person item = ReadItem(reader);
+                            PersonBook item = ReadItem(reader);
                             result.Add(item);
                         }
                         return result;
@@ -39,37 +39,29 @@ namespace BooksTry.Controllers
             }
         }
 
-        private Person ReadItem(SqlDataReader reader)
+        private PersonBook ReadItem(SqlDataReader reader)
         {
-            int id = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
-            string fullName = reader.IsDBNull(1) ? "" : reader.GetString(1);
-            string username = reader.IsDBNull(2) ? "" : reader.GetString(2);
-            string pass = reader.IsDBNull(3) ? "" : reader.GetString(3);
-            string email = reader.IsDBNull(4) ? "" : reader.GetString(4);
-            int type = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
-            string userPhoto = reader.IsDBNull(6) ? "" : reader.GetString(6);
+            int pBId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+            int personId = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+            int bookId = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
 
-            Person item = new Person()
+            PersonBook item = new PersonBook()
             {
-                PersonId = id,
-                FullName = fullName,
-                Username = username,
-                Pass = pass,
-                Email = email,
-                Type = type,
-                UserPhoto = userPhoto
+                PBId = pBId,
+                PersonId = personId,
+                BookId = bookId
             };
 
             return item;
         }
 
-        // GET: api/Person/5
+        // GET: api/PersonBook/5
         [Route("{id}")]
-        public Person Get(int id)
+        public PersonBook Get(int id)
         {
             try
             {
-                string selectString = "select * from PERSON where PersonId = @id";
+                string selectString = "select * from PERSONBOOK where PBId = @id";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -98,13 +90,13 @@ namespace BooksTry.Controllers
             }
         }
 
-        // POST: api/Person
+        // POST: api/PersonBook
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT: api/Person/5
+        // PUT: api/PersonBook/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {

@@ -13,14 +13,14 @@ namespace BooksTry.Models
         public string Pass { get; set; }
         public string Email { get; set; }
         public int Type { get; set; } //in db is int, later on connect to enum
-        //public byte[] Photo { get; set; }
+        public string UserPhoto { get; set; }
 
         public Person()
         {
                 
         }
 
-        public Person(int personId, string fullName, string username, string pass, string email, int type)
+        public Person(int personId, string fullName, string username, string pass, string email, int type, string userPhoto)
         {
             PersonId = personId;
             FullName = fullName;
@@ -28,6 +28,7 @@ namespace BooksTry.Models
             Pass = pass;
             Email = email;
             Type = type;
+            UserPhoto = userPhoto;
         }
     }
 }
