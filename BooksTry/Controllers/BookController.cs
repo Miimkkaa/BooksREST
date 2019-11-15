@@ -46,9 +46,10 @@ namespace BooksTry.Controllers
             string author = reader.IsDBNull(2) ? "" : reader.GetString(2);
             string bookDes = reader.IsDBNull(3) ? "" : reader.GetString(3);
             string genre = reader.IsDBNull(4) ? "" : reader.GetString(4);
-            double price = reader.IsDBNull(5) ? 0 : reader.GetDouble(5);
+            decimal price = reader.IsDBNull(5) ? 0 : reader.GetDecimal(5);
             int nop = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
             int nov = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
+            string bookPdf = reader.IsDBNull(8) ? "" : reader.GetString(8);
 
             Book item = new Book()
             {
@@ -59,7 +60,8 @@ namespace BooksTry.Controllers
                 Genre = genre,
                 Price = price,
                 NoP = nop,
-                NoV = nov
+                NoV = nov,
+                BookPdf = bookPdf
             };
 
             return item;

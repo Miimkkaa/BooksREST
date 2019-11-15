@@ -12,13 +12,21 @@ namespace BooksTry.Models
         public string Author { get; set; }
         public string BookDes { get; set; }
         public string Genre { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int NoP{ get; set; }
         public int NoV { get; set; }
+        public string BookPdf { get; set; }
 
         // Later we should add the property for PDF
 
-        public Book(int bookId, string title, string author, string bookDes, string genre, double price, int noP, int noV)
+        
+        
+        public Book()
+        {
+
+        }
+
+        public Book(int bookId, string title, string author, string bookDes, string genre, decimal price, int noP, int noV, string bookPdf)
         {
             BookId = bookId;
             Title = title;
@@ -28,10 +36,7 @@ namespace BooksTry.Models
             Price = price;
             NoP = noP;
             NoV = noV;
-        }
-        public Book()
-        {
-
+            BookPdf = bookPdf;
         }
 
         //ToString
