@@ -97,6 +97,95 @@ namespace BooksTry.Controllers
             }
         }
 
+        //get all books for 1 order
+        [Route("personOrder/{orderId}")]
+        public List<Book> GetPersonOrder(int orderId)
+        {
+                string selectString = "select * from ORDERBOOK where OrdersId = @orderId";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@orderId", orderId);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                BookOrder item = ReadItem(reader);
+                                result.Add(GetBook(item.Bookid));
+                        }
+                        return result;
+                        }
+                    }
+                }
+        }
+
+        private Book ReadBook(SqlDataReader reader)
+        {
+            int bookId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+            string title = reader.IsDBNull(1) ? "" : reader.GetString(1);
+            string author = reader.IsDBNull(2) ? "" : reader.GetString(2);
+            string bookDes = reader.IsDBNull(3) ? "" : reader.GetString(3);
+            string genre = reader.IsDBNull(4) ? "" : reader.GetString(4);
+            decimal price = reader.IsDBNull(5) ? 0 : reader.GetDecimal(5);
+            int nop = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
+            int nov = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
+            string bookPdf = reader.IsDBNull(8) ? "" : reader.GetString(8);
+
+            Book item = new Book()
+            {
+                BookId = bookId,
+                Title = title,
+                Author = author,
+                BookDes = bookDes,
+                Genre = genre,
+                Price = price,
+                NoP = nop,
+                NoV = nov,
+                BookPdf = bookPdf
+            };
+
+            return item;
+        }
+
+        // GET: api/Order/5
+        //[HttpGet("{id}", Name = "Get")]
+        [Route("{id}")]
+        public Book GetBook(int id)
+        {
+            try
+            {
+                string selectString = "select * from BOOK where BookId = @id";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
+                                return ReadBook(reader);
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
+        }
+
         // POST: api/BookOrder
         [HttpPost]
         public void Post([FromBody] string value)
