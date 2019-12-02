@@ -109,9 +109,22 @@ namespace BooksTry.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{orderId}/{bookId}")]
+        public int Delete(int orderId, int bookId)
         {
+            string deleteString = "delete from ORDERBOOK where BookId = @bookId and OrdersId = @orderId";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(deleteString, conn))
+                {
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    command.Parameters.AddWithValue("@orderId", orderId);
+                    int rowAffected = command.ExecuteNonQuery();
+                    return rowAffected;
+                }
+            }
         }
     }
 }
