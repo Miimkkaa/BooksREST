@@ -43,7 +43,7 @@ namespace BooksTry.Controllers
         {
             int ordersId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
             int personId = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
-            double totalPrice = reader.IsDBNull(2) ? 0 : reader.GetDouble(2);
+            decimal totalPrice = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2);
             bool paid = reader.IsDBNull(3) ? false : reader.GetBoolean(3);
             DateTime purchaseDate = reader.IsDBNull(4) ? DateTime.Parse("1900-11-11T00:00:00.00") : reader.GetDateTime(4);
 
