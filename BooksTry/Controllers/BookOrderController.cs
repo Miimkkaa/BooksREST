@@ -153,8 +153,6 @@ namespace BooksTry.Controllers
         }
 
         // GET: api/Order/5
-        //[HttpGet("{id}", Name = "Get")]
-        //[Route("{id}")]
         public Book GetBook(int id)
         {
             try
