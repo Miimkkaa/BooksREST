@@ -50,6 +50,7 @@ namespace BooksTry.Controllers
             int nop = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
             int nov = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
             string bookPdf = reader.IsDBNull(8) ? "" : reader.GetString(8);
+            string coverPhoto = reader.IsDBNull(9) ? "" : reader.GetString(9);
 
             Book item = new Book()
             {
@@ -61,7 +62,8 @@ namespace BooksTry.Controllers
                 Price = price,
                 NoP = nop,
                 NoV = nov,
-                BookPdf = bookPdf
+                BookPdf = bookPdf,
+                CoverPhoto = coverPhoto
             };
 
             return item;
