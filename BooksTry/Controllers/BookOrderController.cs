@@ -44,18 +44,12 @@ namespace BooksTry.Controllers
             int boId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
             int orderId = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
             int bookId = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
-            int cardNumber = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
-            DateTime expiryDate = reader.IsDBNull(4) ? DateTime.Parse("1754-11-11T00:00:00.00") : reader.GetDateTime(4);
-            int cvv = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
 
             BookOrder item = new BookOrder()
             {
                 BOId = boId,
                 OrderId = orderId,
                 Bookid = bookId,
-                CardNumber = cardNumber,
-                ExpiryDate = expiryDate,
-                CVV = cvv
             };
 
             return item;
