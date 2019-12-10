@@ -115,5 +115,23 @@ namespace BooksTry.Controllers
         public void Delete(int id)
         {
         }
+
+        [Route("login/{username}/{password}")]
+        public Person Login(string username, string password)
+        {
+            var collection = Get();
+            if (collection != null)
+            {
+                foreach (var person in collection)
+                {
+                    if ((person.Username == username) && (person.Pass == password))
+                    {
+                        return person;
+
+                    }
+                }
+            }
+            return null;
+        }
     }
 }
