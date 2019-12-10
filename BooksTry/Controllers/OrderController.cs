@@ -46,6 +46,9 @@ namespace BooksTry.Controllers
             decimal totalPrice = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2);
             bool paid = reader.IsDBNull(3) ? false : reader.GetBoolean(3);
             DateTime purchaseDate = reader.IsDBNull(4) ? DateTime.Parse("1900-11-11T00:00:00.00") : reader.GetDateTime(4);
+            int cardNumber = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
+            DateTime expiryDate = reader.IsDBNull(6) ? DateTime.Parse("1754-11-11T00:00:00.00") : reader.GetDateTime(6);
+            int cvc = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
 
             Order item = new Order()
             {
@@ -54,6 +57,9 @@ namespace BooksTry.Controllers
                 TotalPrice = totalPrice,
                 Paid = paid,
                 PurchaseDate = purchaseDate,
+                CardNumber = cardNumber,
+                ExpiryDate = expiryDate,
+                CVC = cvc
             };
 
             return item;
