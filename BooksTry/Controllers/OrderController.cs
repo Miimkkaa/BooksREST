@@ -46,8 +46,8 @@ namespace BooksTry.Controllers
             decimal totalPrice = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2);
             bool paid = reader.IsDBNull(3) ? false : reader.GetBoolean(3);
             DateTime purchaseDate = reader.IsDBNull(4) ? DateTime.Parse("1900-11-11T00:00:00.00") : reader.GetDateTime(4);
-            int cardNumber = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
-            DateTime expiryDate = reader.IsDBNull(6) ? DateTime.Parse("1754-11-11T00:00:00.00") : reader.GetDateTime(6);
+            string cardNumber = reader.IsDBNull(5) ? "" : reader.GetString(5);
+            int expiryDate = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
             int cvc = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
 
             Order item = new Order()
@@ -107,10 +107,28 @@ namespace BooksTry.Controllers
         {
         }
 
+        //update order: for payment
         // PUT: api/Order/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public int Put(int id, [FromBody] Order value)
         {
+            string updateString = "update ORDERS set Paid = @paid, PurchaseDate = @purchaseDate," +
+                " CardNumber = @cardNumber, ExpiryDate = @ExpiryDate, CVC = @cvc where OrdersId = @id; ";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(updateString, conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@paid", true);
+                    command.Parameters.AddWithValue("@purchaseDate", DateTime.Now);
+                    command.Parameters.AddWithValue("@cardNumber", value.CardNumber);
+                    command.Parameters.AddWithValue("@ExpiryDate", value.ExpiryDate);
+                    command.Parameters.AddWithValue("@cvc", value.CVC);
+                    int rowAffected = command.ExecuteNonQuery();
+                    return rowAffected;
+                }
+            }
         }
 
         // DELETE: api/ApiWithActions/5
