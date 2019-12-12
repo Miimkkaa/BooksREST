@@ -9,25 +9,29 @@ namespace BooksTry.Models
     {
         public int OrderId { get; set; }
         public int PersonId { get; set; }
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public bool Paid { get; set; }
         public DateTime PurchaseDate { get; set; }
+        public string CardNumber { get; set; }
+        public int ExpiryDate { get; set; }
+        public int CVC { get; set; }
+               
+        public Order()
+        {
+            
+        }
 
-        public Order(int orderId, int personId, double totalPrice, bool paid, DateTime purchaseDate)
+        public Order(int orderId, int personId, decimal totalPrice, bool paid, DateTime purchaseDate, string cardNumber, int expiryDate, int cVC)
         {
             OrderId = orderId;
             PersonId = personId;
             TotalPrice = totalPrice;
             Paid = paid;
             PurchaseDate = purchaseDate;
+            CardNumber = cardNumber;
+            ExpiryDate = expiryDate;
+            CVC = cVC;
         }
-
-        public Order()
-        {
-            
-        }
-
-        //ToString
     }
 
 }
