@@ -15,30 +15,6 @@ namespace BooksTry.Controllers
     {
         private string connectionString = ConnectionString.connectionString;
 
-        // GET: api/Book
-        [HttpGet]
-        public IEnumerable<Book> Get()
-        {
-            string selectString = "select * from BOOK;";
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                using (SqlCommand command = new SqlCommand(selectString, conn))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        List<Book> result = new List<Book>();
-                        while (reader.Read())
-                        {
-                            Book item = ReadItem(reader);
-                            result.Add(item);
-                        }
-                        return result;
-                    }
-                }
-            }
-        }
-
         private Book ReadItem(SqlDataReader reader)
         {
             int bookId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
@@ -69,9 +45,33 @@ namespace BooksTry.Controllers
             return item;
         }
 
-        // GET: api/Order/5
+        // GET: api/Book
+        [HttpGet]
+        public IEnumerable<Book> Get()
+        {
+            string selectString = "select * from BOOK;";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(selectString, conn))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<Book> result = new List<Book>();
+                        while (reader.Read())
+                        {
+                            Book item = ReadItem(reader);
+                            result.Add(item);
+                        }
+                        return result;
+                    }
+                }
+            }
+        }
+
+        // GET: api/Book/5
         //[HttpGet("{id}", Name = "Get")]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public Book Get(int id)
         {
             try
@@ -105,6 +105,75 @@ namespace BooksTry.Controllers
             }
         }
 
+        // GET: api/Book/Horror
+        //[HttpGet("{genre}", Name = "Get")]
+        [Route("{genre}")]
+        public IEnumerable<Book> GetBooksByGenre(String genre)
+        {
+            try
+            {
+                string selectString = "select * from BOOK where genre LIKE @genre";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@genre", genre);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
+        }
+
+        // GET: api/Book/Horror
+        //[HttpGet("{genre}", Name = "Get")]
+        [Route("search/{name}")]
+        public IEnumerable<Book> GetBooksByName(String name)
+        {
+            try
+            {
+                string selectString = "select * from dbo.BOOK as b where b.Title LIKE @title or b.Author LIKE @author";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@title", name);
+                        command.Parameters.AddWithValue("@author", name);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
+        }
+
         // POST: api/Book
         [HttpPost]
         public void Post([FromBody] string value)
@@ -121,6 +190,66 @@ namespace BooksTry.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+
+        // Book review's
+        private BookReviews ReadBookReviews(SqlDataReader reader)
+        {
+            int reviewId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+            int personId = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+            int bookId = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
+            int rating = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
+            string rText = reader.IsDBNull(4) ? "" : reader.GetString(4);
+            string username = reader.IsDBNull(5) ? "" : reader.GetString(5);
+            string userPhoto = reader.IsDBNull(6) ? "" : reader.GetString(6);
+
+            BookReviews item = new BookReviews()
+            {
+                ReviewId = reviewId,
+                PersonId = personId,
+                BookId = bookId,
+                ReviewRating = rating,
+                ReviewText = rText,
+                PersonUsername = username,
+                PersonUserPhoto = userPhoto
+            };
+
+            return item;
+        }
+
+        // GET: api/Book/5/Reviews
+        //[HttpGet("{bookId}", Name = "Get")]
+        [Route("{bookId}/reviews")]
+        public IEnumerable<BookReviews> GetReviews(int bookId)
+        {
+            try
+            {
+                string selectString = "select r.*, p.FullName, p.UserPhoto from dbo.REVIEW as r inner join dbo.PERSON as p on r.PersonId = p.PersonId where BookId = @id";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@id", bookId);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<BookReviews> result = new List<BookReviews>();
+                            while (reader.Read())
+                            {
+                                BookReviews item = ReadBookReviews(reader);
+                                result.Add(item);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
         }
     }
 }
