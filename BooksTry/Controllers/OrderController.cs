@@ -101,10 +101,62 @@ namespace BooksTry.Controllers
             }
         }
 
+        //get orderId by personID
+        //api/order/orderId/5
+        [Route("orderId/{id}")]
+        public int GetOrderId(int id)
+        {
+            try
+            {
+                string selectString = "select OrdersId from ORDERS where PersonId = @id and Paid = 0";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
+                                int ordersId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                                return ordersId;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return 0;
+            }
+        }
+
         // POST: api/Order
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] Order value)
         {
+            string inseartString = "INSERT INTO ORDERS (PersonId, TotalPrice, Paid) values(@personId, @totalPrice, @paid); ";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(inseartString, conn))
+                {
+                    command.Parameters.AddWithValue("@personId", value.PersonId);
+                    command.Parameters.AddWithValue("@totalPrice", 0);
+                    command.Parameters.AddWithValue("@paid", false);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return true;
+                }
+            }
         }
 
         //update order: for payment
@@ -125,6 +177,35 @@ namespace BooksTry.Controllers
                     command.Parameters.AddWithValue("@cardNumber", value.CardNumber);
                     command.Parameters.AddWithValue("@ExpiryDate", value.ExpiryDate);
                     command.Parameters.AddWithValue("@cvc", value.CVC);
+                    int rowAffected = command.ExecuteNonQuery();
+                    return rowAffected;
+                }
+            }
+        }
+
+        //update total price
+        //api/order/priceUpdate/remove/5 --> when removing book from basket
+        //api/order/priceUpdate/add/5 --> when adding book to basket
+        [HttpPut("priceUpdate/{removeOrAdd}/{id}")]
+        public int PutPrice(int id, string removeOrAdd, [FromBody] Order value)
+        {
+            decimal bookPrice = 0;
+            if (removeOrAdd == "remove")
+            {
+                bookPrice = value.TotalPrice * (-1);
+            }
+            else if (removeOrAdd == "add")
+            {
+                bookPrice = value.TotalPrice;
+            }
+            string updateString = "update ORDERS set TotalPrice = (TotalPrice + (@totalPrice)) where OrdersId = @id;";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(updateString, conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@totalPrice", bookPrice);
                     int rowAffected = command.ExecuteNonQuery();
                     return rowAffected;
                 }
