@@ -20,5 +20,23 @@ namespace BooksTesting
             Person person = _controller.Get(1); //get by id
             Assert.AreEqual("mimka", person.Username);
         }
+
+        [TestMethod]
+        public void TestPosting()
+        {
+            Person newPerson = new Person
+            {
+                FullName = "Kirilka Kirova",
+                Username = "kiki",
+                Pass = "123456789",
+                Email = "kiki@gmail.com",
+                Type = 1
+            };
+            bool perCount = _controller.Post(newPerson);
+            Assert.AreEqual(true, perCount);
+
+            IEnumerable<Person> personList = _controller.Get();
+            Assert.AreEqual(3, personList.Count()); // Passed
+        }
     }
 }
