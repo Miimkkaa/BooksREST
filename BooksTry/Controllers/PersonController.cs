@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BooksTry.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BooksTry.Controllers
 {
@@ -100,8 +101,61 @@ namespace BooksTry.Controllers
 
         // POST: api/Person
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] Person value)
         {
+
+            string insertString =
+                "INSERT INTO PERSON (FullName, Username, Pass, Email, UserType) values(@FullName, @Username, @Pass, @Email, @type);";
+            bool item = CheckUsernameValidation(value.Username);
+
+            if (item == true)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(insertString, conn))
+                    {
+
+                        command.Parameters.AddWithValue("@FullName", value.FullName);
+                        command.Parameters.AddWithValue("@Username", value.Username);
+                        command.Parameters.AddWithValue("@Pass", value.Pass);
+                        command.Parameters.AddWithValue("@Email", value.Email);
+                        command.Parameters.AddWithValue("@type", 1);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+            }
+            else
+                return false;
+        }
+
+        //[Route("{usernameValidation}")]
+        public bool CheckUsernameValidation(string usernameValidation)
+        {
+            string usernameValidationString = "SELECT * from PERSON WHERE username = @usernameV;";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(usernameValidationString, conn))
+                {
+                    command.Parameters.AddWithValue("@usernameV", usernameValidation);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
 
         // PUT: api/Person/5
