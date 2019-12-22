@@ -65,6 +65,31 @@ namespace BooksTry.Controllers
             return item;
         }
 
+        // GET: api/Order/orderHistory/5
+        [Route("orderHistory/{id}")]
+        public IEnumerable<Order> GetOrderHistory(int id)
+        {
+            string selectString = "select * from ORDERS where PersonId = @id and Paid = 'true';";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(selectString, conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<Order> result = new List<Order>();
+                        while (reader.Read())
+                        {
+                            Order item = ReadItem(reader);
+                            result.Add(item);
+                        }
+                        return result;
+                    }
+                }
+            }
+        }
+
         // GET: api/Order/5
         //[HttpGet("{id}", Name = "Get")]
         [Route("{id}")]

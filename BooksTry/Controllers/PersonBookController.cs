@@ -90,6 +90,62 @@ namespace BooksTry.Controllers
             }
         }
 
+        private Bookshelf ReadBookshelf(SqlDataReader reader)
+        {
+            int personId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+            int bookId = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+            string title = reader.IsDBNull(2) ? "" : reader.GetString(2);
+            string author = reader.IsDBNull(3) ? "" : reader.GetString(3);
+            string coverPhoto = reader.IsDBNull(4) ? "" : reader.GetString(4);
+
+            Bookshelf item = new Bookshelf()
+            {
+                PersonId = personId,
+                BookId = bookId,
+                BookAuthor = author,
+                BookTitle = title,
+                CoverPhoto = coverPhoto
+            };
+
+            return item;
+        }
+
+        //api/PersonBook/person/77
+        [Route("person/{id}")]
+        public IEnumerable<Bookshelf> GetByPerson(int id)
+        {
+            try
+            {
+                string selectString = "select pb.PersonId, pb.BookId, b.Title, b.Author, b.CoverPhoto " +
+                    "from PERSONBOOK as pb " +
+                    "inner join BOOK as b " +
+                    "on pb.BookId = b.BookId " +
+                    "where pb.PersonId = @id";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Bookshelf> result = new List<Bookshelf>();
+                            while (reader.Read())
+                            {
+                                Bookshelf item = ReadBookshelf(reader);
+                                result.Add(item);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
+        }
         // POST: api/PersonBook
         [HttpPost]
         public void Post([FromBody] string value)
