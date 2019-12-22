@@ -92,8 +92,22 @@ namespace BooksTry.Controllers
 
         // POST: api/BookOrder
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] BookOrder value)
         {
+            string inseartString = "INSERT INTO ORDERBOOK (OrdersId, BookId) values(@ordersId, @bookId); ";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(inseartString, conn))
+                {
+                    command.Parameters.AddWithValue("@ordersId", value.OrderId);
+                    command.Parameters.AddWithValue("@bookId", value.Bookid);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return true;
+                }
+            }
         }
 
         // PUT: api/BookOrder/5
