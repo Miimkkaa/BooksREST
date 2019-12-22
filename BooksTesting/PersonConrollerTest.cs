@@ -38,5 +38,19 @@ namespace BooksTesting
             IEnumerable<Person> personList = _controller.Get();
             Assert.AreEqual(3, personList.Count()); // Passed
         }
+
+        [TestMethod]
+        public void TestPutPerson()
+        {
+            Person newPerson = new Person()
+            {
+                FullName = "Milena Ognianova",
+                Email = "mimka@gmail.com",
+                Username = "mimka",
+                Pass = "12345",
+            };
+            int usersCount = _controller.Put(2, newPerson);
+            Assert.AreEqual("12345", newPerson.Pass); // Passed
+        }
     }
 }

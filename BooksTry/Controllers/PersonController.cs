@@ -160,8 +160,22 @@ namespace BooksTry.Controllers
 
         // PUT: api/Person/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public int Put(int id, [FromBody] Person value)
         {
+            string updateString = "UPDATE PERSON SET FullName=@FullName, Email=@Email, Pass=@Pass where PersonId = @id; ";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(updateString, conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@FullName", value.FullName);
+                    command.Parameters.AddWithValue("@Email", value.Email);
+                    command.Parameters.AddWithValue("@Pass", value.Pass);
+                    int rowAffected = command.ExecuteNonQuery();
+                    return rowAffected;
+                }
+            }
         }
 
         // DELETE: api/ApiWithActions/5
