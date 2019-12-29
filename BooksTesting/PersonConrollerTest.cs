@@ -45,12 +45,20 @@ namespace BooksTesting
             Person newPerson = new Person()
             {
                 FullName = "Milena Ognianova",
-                Email = "mimka@gmail.com",
-                Username = "mimka",
-                Pass = "12345",
+                Email = "mimka@gmail.bg"
             };
             int usersCount = _controller.Put(2, newPerson);
-            Assert.AreEqual("12345", newPerson.Pass); // Passed
+            Assert.AreEqual("12345", newPerson.Email); // Passed
+        }
+
+        public void TestPutPass()
+        {
+            Person newPerson = new Person()
+            {
+                Pass = "M123456",
+            };
+            int usersCount = _controller.Put(2, newPerson);
+            Assert.AreEqual("123456", newPerson.Pass); // Passed
         }
     }
 }
