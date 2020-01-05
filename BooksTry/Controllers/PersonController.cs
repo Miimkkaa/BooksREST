@@ -233,7 +233,24 @@ namespace BooksTry.Controllers
                 }
             }
         }
-        
+
+        // DELETE: api/ApiWithActions/5
+        [HttpDelete("delAccount/{personId}")]
+        public int DeleteAccount(int personId)
+        {
+            string deleteString =
+                "BEGIN TRANSACTION SET XACT_ABORT ON DELETE PERSONBOOK WHERE PersonId=@PersonId DELETE PERSON WHERE PersonId=@PersonId COMMIT TRANSACTION";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(deleteString, conn))
+                {
+                    command.Parameters.AddWithValue("@PersonId", personId);
+                    int rowAffected = command.ExecuteNonQuery();
+                    return rowAffected;
+                }
+            }
+        }
 
         [Route("login/{username}/{password}")]
         public Person Login(string username, string password)
