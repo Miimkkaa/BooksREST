@@ -198,43 +198,6 @@ namespace BooksTry.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("firstDel/{personId}")]
-        public bool Delete(int personId)
-        {
-            string deleteString = "DELETE FROM PERSONBOOK WHERE PersonId=@PersonId";
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                using (SqlCommand command = new SqlCommand(deleteString, conn))
-                {
-                    command.Parameters.AddWithValue("@PersonId", personId);
-                    int rowAffected = command.ExecuteNonQuery();
-                    return true;
-                }
-            }
-        }
-
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("secondDel/{personId}")]
-        public int DeletePerson(int personId)
-        {
-            string deleteString = "DELETE FROM PERSON WHERE PersonId=@PersonId";
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                using (SqlCommand command = new SqlCommand(deleteString, conn))
-                {
-                    command.Parameters.AddWithValue("@PersonId", personId);
-                    int rowAffected = command.ExecuteNonQuery();
-                    return rowAffected;
-                }
-            }
-        }
-
-        // DELETE: api/ApiWithActions/5
         [HttpDelete("delAccount/{personId}")]
         public int DeleteAccount(int personId)
         {
