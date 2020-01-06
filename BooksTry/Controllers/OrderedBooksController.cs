@@ -105,6 +105,59 @@ namespace BooksTry.Controllers
             }
         }
 
+        [HttpGet("addToShelf/{personId}")]
+        public async void GetAndPost(int personId)
+        {
+            string selectString = "select o.OrdersId, o.TotalPrice, o.PersonId, b.BookId, b.Title, b.Author, b.Price, b.CoverPhoto " +
+                "from dbo.ORDERS as o " +
+                "inner join dbo.ORDERBOOK as ob " +
+                "on o.OrdersId = ob.OrdersId " +
+                "inner join dbo.BOOK as b " +
+                "on ob.BookId = b.BookId " +
+                "where o.Paid = 'false'and o.PersonId = '" + personId +
+                "'; ";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(selectString, conn))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<OrderedBooks> result = new List<OrderedBooks>();
+                        while (reader.Read())
+                        {
+                            OrderedBooks item = ReadOrderedBook(reader);
+                            result.Add(item);
+                        }
+
+                        foreach (OrderedBooks item in result)
+                        {
+                            await AddToShelf(personId, item.bookId);
+                        }
+                    }
+                }
+            }
+        }
+
+        public async Task<int> AddToShelf(int personId, int bookId)
+        {
+            string inseartString = "INSERT INTO PERSONBOOK (PersonId, BookId) values(@personId, @bookId); ";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(inseartString, conn))
+                {
+                    command.Parameters.AddWithValue("@personId", personId);
+                    command.Parameters.AddWithValue("@bookId", bookId);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return 1;
+                }
+            }
+        }
+
+
         // POST: api/OrderedBooks
         [HttpPost]
         public void Post([FromBody] string value)

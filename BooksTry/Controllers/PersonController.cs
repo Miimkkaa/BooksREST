@@ -101,7 +101,7 @@ namespace BooksTry.Controllers
 
         // POST: api/Person
         [HttpPost]
-        public bool Post([FromBody] Person value)
+        public async void PostAsync([FromBody] Person value)
         {
 
             string insertString =
@@ -123,12 +123,15 @@ namespace BooksTry.Controllers
                         command.Parameters.AddWithValue("@type", 1);
 
                         int rowsAffected = command.ExecuteNonQuery();
-                        return true;
+
+                        await PostOrder(GetPersonId());
+
+                        //return true;
                     }
                 }
             }
-            else
-                return false;
+            //else
+                //return false;
         }
 
         //[Route("{usernameValidation}")]
@@ -231,6 +234,49 @@ namespace BooksTry.Controllers
                 }
             }
             return null;
+        }
+
+        public int GetPersonId()
+        {
+            string selectString = "SELECT TOP 1 * FROM PERSON ORDER BY PersonId DESC";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(selectString, conn))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            return ReadItem(reader).PersonId;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> PostOrder(int personId)
+        {
+            string inseartString = "INSERT INTO ORDERS (PersonId, TotalPrice, Paid) values(@personId, @totalPrice, @paid); ";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(inseartString, conn))
+                {
+                    command.Parameters.AddWithValue("@personId", personId);
+                    command.Parameters.AddWithValue("@totalPrice", 0);
+                    command.Parameters.AddWithValue("@paid", false);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return true;
+                }
+            }
         }
     }
 }
