@@ -158,11 +158,12 @@ namespace BooksTry.Controllers
             }
         }
 
-        // PUT: api/Person/5
+        // Update user's full name and email
+        // PUT: api/Person/5 
         [HttpPut("{id}")]
         public int Put(int id, [FromBody] Person value)
         {
-            string updateString = "UPDATE PERSON SET FullName=@FullName, Email=@Email, Pass=@Pass where PersonId = @id; ";
+            string updateString = "UPDATE PERSON SET FullName=@FullName, Email=@Email where PersonId = @id; ";
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
@@ -171,6 +172,24 @@ namespace BooksTry.Controllers
                     command.Parameters.AddWithValue("@id", id);
                     command.Parameters.AddWithValue("@FullName", value.FullName);
                     command.Parameters.AddWithValue("@Email", value.Email);
+                    int rowAffected = command.ExecuteNonQuery();
+                    return rowAffected;
+                }
+            }
+        }
+
+        // Update user's password
+        // PUT: api/Person/5
+        [HttpPut("passChange/{id}")]
+        public int PutPass(int id, [FromBody] Person value)
+        {
+            string updateString = "UPDATE PERSON SET Pass=@Pass where PersonId = @id;";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(updateString, conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
                     command.Parameters.AddWithValue("@Pass", value.Pass);
                     int rowAffected = command.ExecuteNonQuery();
                     return rowAffected;
@@ -179,9 +198,21 @@ namespace BooksTry.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("delAccount/{personId}")]
+        public int DeleteAccount(int personId)
         {
+            string deleteString =
+                "BEGIN TRANSACTION SET XACT_ABORT ON DELETE PERSONBOOK WHERE PersonId=@PersonId DELETE PERSON WHERE PersonId=@PersonId COMMIT TRANSACTION";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(deleteString, conn))
+                {
+                    command.Parameters.AddWithValue("@PersonId", personId);
+                    int rowAffected = command.ExecuteNonQuery();
+                    return rowAffected;
+                }
+            }
         }
 
         [Route("login/{username}/{password}")]
