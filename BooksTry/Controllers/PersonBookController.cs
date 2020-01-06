@@ -148,8 +148,30 @@ namespace BooksTry.Controllers
         }
         // POST: api/PersonBook
         [HttpPost]
-        public void Post([FromBody] string value)
+        public int Post([FromBody] PersonBook value)
         {
+            try
+            {
+                string inseartString = "INSERT INTO PERSONBOOK (PersonId, BookId) values(@personId, @bookId); ";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(inseartString, conn))
+                    {
+                        command.Parameters.AddWithValue("@personId", value.PersonId);
+                        command.Parameters.AddWithValue("@bookId", value.BookId);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return 1;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+            
         }
 
         // PUT: api/PersonBook/5

@@ -32,7 +32,7 @@ namespace BooksTesting
                 Email = "kiki@gmail.com",
                 Type = 1
             };
-            bool perCount = _controller.Post(newPerson);
+            bool perCount = _controller.PostAsync(newPerson);
             Assert.AreEqual(true, perCount);
 
             IEnumerable<Person> personList = _controller.Get();
