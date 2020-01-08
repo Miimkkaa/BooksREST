@@ -111,8 +111,8 @@ namespace BooksTry.Controllers
         }
 
         //api/PersonBook/person/77
-        [Route("person/{id}")]
-        public IEnumerable<Bookshelf> GetByPerson(int id)
+        [Route("person/{personId}")]
+        public IEnumerable<Bookshelf> GetByPerson(int personId)
         {
             try
             {
@@ -120,13 +120,13 @@ namespace BooksTry.Controllers
                     "from PERSONBOOK as pb " +
                     "inner join BOOK as b " +
                     "on pb.BookId = b.BookId " +
-                    "where pb.PersonId = @id";
+                    "where pb.PersonId = @personId";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     using (SqlCommand command = new SqlCommand(selectString, conn))
                     {
-                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@personId", personId);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             List<Bookshelf> result = new List<Bookshelf>();
