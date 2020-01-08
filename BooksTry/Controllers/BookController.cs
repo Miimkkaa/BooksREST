@@ -105,6 +105,107 @@ namespace BooksTry.Controllers
             }
         }
 
+        // GET: api/Book/Free
+        //[HttpGet("{price}", Name = "Get")]
+        [Route("Free")]
+        public IEnumerable<Book> Get6FreeBooks(Decimal price)
+        {
+            try
+            {
+                //string selectString = "select * from BOOK where genre LIKE @genre";
+                string selectString = "SELECT TOP 6 * FROM BOOK WHERE Price IS NULL;";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        command.Parameters.AddWithValue("@price", price);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
+        }
+
+        // GET: api/Book/Free
+        //[HttpGet("{price}", Name = "Get")]
+        [Route("Fantasy")]
+        public IEnumerable<Book> Get6FantasyBooks()
+        {
+            try
+            {
+                string selectString = "SELECT TOP 6 * FROM dbo.BOOK WHERE Genre LIKE 'Fantasy';";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
+        }
+
+        // GET: api/Book/Suggestions
+        //[HttpGet("{price}", Name = "Get")]
+        [Route("Suggestions")]
+        public IEnumerable<Book> GetSuggestionsBooks()
+        {
+            try
+            {
+                string selectString = "SELECT TOP 5 * FROM dbo.BOOK ORDER BY NEWID();";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return null;
+            }
+        }
+
         // GET: api/Book/Horror
         //[HttpGet("{genre}", Name = "Get")]
         [Route("{genre}")]
@@ -225,7 +326,7 @@ namespace BooksTry.Controllers
         {
             try
             {
-                string selectString = "select r.*, p.FullName, p.UserPhoto from dbo.REVIEW as r inner join dbo.PERSON as p on r.PersonId = p.PersonId where BookId = @id";
+                string selectString = "select r.*, p.Username, p.UserPhoto from dbo.REVIEW as r inner join dbo.PERSON as p on r.PersonId = p.PersonId where BookId = @id";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();

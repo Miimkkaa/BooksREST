@@ -96,8 +96,22 @@ namespace BooksTry.Controllers
 
         // POST: api/Review
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] Review value)
         {
+            string insertString = "insert into REVIEW (PersonId, BookId, RText) values(@personId, @bookId, @rText);";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(insertString, conn))
+                {
+                    command.Parameters.AddWithValue("@personId", value.PersonId);
+                    command.Parameters.AddWithValue("@bookId", value.BookId);
+                    command.Parameters.AddWithValue("@rText", value.RText);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    return true;
+                }
+            }
         }
 
         // PUT: api/Review/5
