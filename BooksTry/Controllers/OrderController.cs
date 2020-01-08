@@ -66,16 +66,16 @@ namespace BooksTry.Controllers
         }
 
         // GET: api/Order/orderHistory/5
-        [Route("orderHistory/{id}")]
-        public IEnumerable<Order> GetOrderHistory(int id)
+        [Route("orderHistory/{personId}")]
+        public IEnumerable<Order> GetOrderHistory(int personId)
         {
-            string selectString = "select * from ORDERS where PersonId = @id and Paid = 'true';";
+            string selectString = "select * from ORDERS where PersonId = @personId and Paid = 'true';";
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 using (SqlCommand command = new SqlCommand(selectString, conn))
                 {
-                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@personId", personId);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         List<Order> result = new List<Order>();
@@ -128,18 +128,18 @@ namespace BooksTry.Controllers
 
         //get orderId by personID
         //api/order/orderId/5
-        [Route("orderId/{id}")]
-        public int GetOrderId(int id)
+        [Route("orderId/{personId}")]
+        public int GetOrderId(int personId)
         {
             try
             {
-                string selectString = "select OrdersId from ORDERS where PersonId = @id and Paid = 0";
+                string selectString = "select OrdersId from ORDERS where PersonId = @personId and Paid = 0";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     using (SqlCommand command = new SqlCommand(selectString, conn))
                     {
-                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@personId", personId);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             if (reader.HasRows)

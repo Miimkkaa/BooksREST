@@ -75,8 +75,8 @@ namespace BooksTry.Controllers
 
         //get ordered books by PersonId
         // GET: api/OrderedBooks/5
-        [HttpGet("{id}")]
-        public IEnumerable<OrderedBooks> Get(int id)
+        [HttpGet("{personId}")]
+        public IEnumerable<OrderedBooks> Get(int personId)
         {
             string selectString = "select o.OrdersId, o.TotalPrice, o.PersonId, b.BookId, b.Title, b.Author, b.Price, b.CoverPhoto " +
                 "from dbo.ORDERS as o " +
@@ -84,7 +84,7 @@ namespace BooksTry.Controllers
                 "on o.OrdersId = ob.OrdersId " +
                 "inner join dbo.BOOK as b " +
                 "on ob.BookId = b.BookId " +
-                "where o.Paid = 'false'and o.PersonId = '" + id +
+                "where o.Paid = 'false'and o.PersonId = '" + personId +
                 "'; ";
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
