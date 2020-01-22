@@ -105,6 +105,68 @@ namespace BooksTry.Controllers
             }
         }
 
+        [Route("allfreebooks")]
+        public int GetAllFreeBooks()
+        {
+            try
+            {
+                string selectString = "select * from BOOK where Price = '0'";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return 0;
+            }
+        }
+
+        [Route("allpaidbooks")]
+        public int GetAllPaidBooks()
+        {
+            try
+            {
+                string selectString = "select * from BOOK where Price != '0'";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return 0;
+            }
+        }
+
         // GET: api/Book/Horror
         //[HttpGet("{genre}", Name = "Get")]
         [Route("{genre}")]

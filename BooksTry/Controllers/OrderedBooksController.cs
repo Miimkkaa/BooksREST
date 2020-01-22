@@ -105,6 +105,37 @@ namespace BooksTry.Controllers
             }
         }
 
+        // GET: api/OrderedBooks/byOrder/7
+        [HttpGet("byOrder/{ordersId}")]
+        public IEnumerable<OrderedBooks> GetByOrder(int ordersId)
+        {
+            string selectString = "select o.OrdersId, o.TotalPrice, o.PersonId, b.BookId, b.Title, b.Author, b.Price, b.CoverPhoto " +
+                "from dbo.ORDERS as o " +
+                "inner join dbo.ORDERBOOK as ob " +
+                "on o.OrdersId = ob.OrdersId " +
+                "inner join dbo.BOOK as b " +
+                "on ob.BookId = b.BookId " +
+                "where o.Paid = 'true'and o.OrdersId = '" + ordersId +
+                "'; ";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(selectString, conn))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<OrderedBooks> result = new List<OrderedBooks>();
+                        while (reader.Read())
+                        {
+                            OrderedBooks item = ReadOrderedBook(reader);
+                            result.Add(item);
+                        }
+                        return result;
+                    }
+                }
+            }
+        }
+
         [HttpGet("addToShelf/{personId}")]
         public async void GetAndPost(int personId)
         {

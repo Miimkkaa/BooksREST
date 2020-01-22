@@ -99,6 +99,68 @@ namespace BooksTry.Controllers
             }
         }
 
+        [Route("allUsers")]
+        public int GetAllUsers()
+        {
+            try
+            {
+                string selectString = "select * from PERSON where UserType = 1";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Person> result = new List<Person>();
+                            while (reader.Read())
+                            {
+                                Person item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return 0;
+            }
+        }
+
+        [Route("allAdmins")]
+        public int GetAllAdmins()
+        {
+            try
+            {
+                string selectString = "select * from PERSON where UserType = 2";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Person> result = new List<Person>();
+                            while (reader.Read())
+                            {
+                                Person item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return 0;
+            }
+        }
+
         // POST: api/Person
         [HttpPost]
         public async void PostAsync([FromBody] Person value)

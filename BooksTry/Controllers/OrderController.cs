@@ -39,6 +39,61 @@ namespace BooksTry.Controllers
             }
         }
 
+        // GET: api/Order
+        [Route("allPaid")]
+        public IEnumerable<Order> GetAllPaidOrders()
+        {
+            string selectString = "select * from ORDERS where Paid = 'true';";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(selectString, conn))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<Order> result = new List<Order>();
+                        while (reader.Read())
+                        {
+                            Order item = ReadItem(reader);
+                            result.Add(item);
+                        }
+                        return result;
+                    }
+                }
+            }
+        }
+
+        [Route("allOpenOrders")]
+        public int GetAllOpenOrders()
+        {
+            try
+            {
+                string selectString = "select * from ORDERS where Paid = 'false'";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Order> result = new List<Order>();
+                            while (reader.Read())
+                            {
+                                Order item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //future handling exceptions
+                return 0;
+            }
+        }
+
         private Order ReadItem(SqlDataReader reader)
         {
             int ordersId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
