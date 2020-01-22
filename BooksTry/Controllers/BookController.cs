@@ -76,7 +76,7 @@ namespace BooksTry.Controllers
         {
             try
             {
-                string selectString = "select * from BOOK where BookId = @id"; 
+                string selectString = "select * from BOOK where BookId = @id";
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -113,7 +113,7 @@ namespace BooksTry.Controllers
             try
             {
                 //string selectString = "select * from BOOK where genre LIKE @genre";
-                string selectString = "SELECT TOP 6 * FROM BOOK WHERE Price IS NULL;";
+                string selectString = "SELECT TOP 6 * FROM BOOK WHERE Price = '0';";     //here i changed
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -350,6 +350,67 @@ namespace BooksTry.Controllers
             {
                 //future handling exceptions
                 return null;
+            }
+        }
+
+        [Route("allfreebooks")]
+        public int GetAllFreeBooks()
+        {
+            try
+            {
+                string selectString = "select * from BOOK where Price = '0'";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+        [Route("allpaidbooks")]
+        public int GetAllPaidBooks()
+        {
+            try
+            {
+                string selectString = "select * from BOOK where Price != '0'";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand command = new SqlCommand(selectString, conn))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            List<Book> result = new List<Book>();
+                            while (reader.Read())
+                            {
+                                Book item = ReadItem(reader);
+                                result.Add(item);
+                            }
+                            return result.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
             }
         }
     }
