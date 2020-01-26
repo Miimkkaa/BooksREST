@@ -170,8 +170,7 @@ namespace BooksTry.Controllers
             catch (Exception)
             {
                 return 0;
-            }
-            
+            }            
         }
 
         // PUT: api/PersonBook/5

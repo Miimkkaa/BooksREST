@@ -105,6 +105,7 @@ namespace BooksTry.Controllers
             }
         }
 
+        //purchased books details 
         // GET: api/OrderedBooks/byOrder/7
         [HttpGet("byOrder/{ordersId}")]
         public IEnumerable<OrderedBooks> GetByOrder(int ordersId)

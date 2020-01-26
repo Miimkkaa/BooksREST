@@ -90,6 +90,7 @@ namespace BooksTry.Controllers
             }
         }
 
+        //add to cart
         // POST: api/BookOrder
         [HttpPost]
         public bool Post([FromBody] BookOrder value)
@@ -116,6 +117,7 @@ namespace BooksTry.Controllers
         {
         }
 
+        //emove from cart
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{orderId}/{bookId}")]
         public int Delete(int orderId, int bookId)
